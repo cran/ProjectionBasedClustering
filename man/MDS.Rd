@@ -1,6 +1,6 @@
 \name{MDS}
 \alias{MDS}
-\title{ Classical multidimensional scaling of a data matrix}
+\title{ Classical multidimensional scaling (MDS)}
 \usage{
 MDS(DataOrDists,method='euclidean',OutputDimension=2,PlotIt=FALSE,Cls)
 }

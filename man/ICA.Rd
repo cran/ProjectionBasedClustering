@@ -35,16 +35,16 @@ Alpha=1,Iterations=200,PlotIt=FALSE,Cls)
  \item{Mixing}{
  [1:OutputDimension,1:d]             Mischungsmatrix s.d gilt Data=MixingMatrix*ProjectedPoints      
  }
-  \item{Unmixing}{Entmischungsmatrix mit Data*Unmixing=ProjectedPoints
+  \item{Unmixing}{Entmischungsmatrix with Data*Unmixing=ProjectedPoints
  }
   \item{PCMatrix}{
    pre-whitening matrix that projects data onto the first n.comp principal components.
  }
 }
 \description{
- Independent Component Analysis
+ Independent Component Analysis:
  
- Negentropie: Entropiedifferenz zu einer entsprechenden normalverteilten Zufallsvariable 
+ Negentropie: difference of entropy to a corresponding normally-distributed random variable
              J(y)=|E(G(y)-E(G(v)))|^2
  }
  \author{Michael Thrun}

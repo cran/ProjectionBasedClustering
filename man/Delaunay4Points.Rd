@@ -1,11 +1,10 @@
 \name{Delaunay4Points}
 \alias{Delaunay4Points}
 \title{
-Calculates the adjacency matrix of the delaunay graph for bestmatches in tiled form if BMs are located on a toroid grid
-
+Adjacency matrix of the delaunay graph for BestMatches of Points
 }
 \description{
-Calculates the adjacency matrix of the delaunay graph for bestmatches in tiled form if BMs are located on a toroid grid
+Calculates the adjacency matrix of the delaunay graph for BestMatches (BMs) in tiled form if BestMatches are located on a toroid grid
 }
 \usage{
 Delaunay4Points(Points, IsToroid = TRUE,Grid=NULL,PlotIt=FALSE)
@@ -24,7 +23,7 @@ as
  Delaunay[1:n,1:n]               adjacency matrix of the Delaunay-Graph
 }
 \references{
-thesis
+[Thrun, 2017]   Thrun, M. C.: A System for Projection Based Clustering through Self-Organization and Swarm Intelligence, (Doctoral dissertation), Philipps-Universität Marburg, Marburg, 2017.
 }
 \author{
 Michael Thrun

@@ -4,7 +4,8 @@
 NeRV projection
 }
 \description{
-Applies the NeRV projection 
+Projection is done by the neighbor
+retrieval visualizer (NeRV) 
 }
 \usage{
 NeRV(Data, lambda = 0.1, neighbors = 20, iterations = 10, 
@@ -39,8 +40,8 @@ Other changes are made only regarding data types of Rcpp in comparison to the or
 }
 \references{
 Jarkko Venna, Jaakko Peltonen, Kristian Nybo, Helena Aidos, and Samuel Kaski. Information Retrieval Perspective to Nonlinear Dimensionality Reduction for Data Visualization. Journal of Machine Learning Research, 11:451-490, 2010.
-Jarkko Venna and Samuel Kaski. Nonlinear Dimensionality Reduction as Information Retrieval. In Marina Meila and Xiaotong Shen, editors, Proceedings of AISTATS 2007, the 11th International Conference on Artificial Intelligence and Statistics. Omnipress, 2007. JMLR Workshop and Conference Proceedings, Volume 2: AISTATS 2007.
 
+Jarkko Venna and Samuel Kaski. Nonlinear Dimensionality Reduction as Information Retrieval. In Marina Meila and Xiaotong Shen, editors, Proceedings of AISTATS 2007, the 11th International Conference on Artificial Intelligence and Statistics. Omnipress, 2007. JMLR Workshop and Conference Proceedings, Volume 2: AISTATS 2007.
 }
 \author{
 Michael Thrun, Felix Pape
