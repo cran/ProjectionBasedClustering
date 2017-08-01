@@ -38,4 +38,4 @@ Alpha=1,Iterations=200,PlotIt=FALSE,Cls)
  In the absence of a generative model for the data the algorithm can be used to find the projection pursuit directions. Projection pursuit is a technique for finding 'interesting' directions in multidimensional  datasets
 }
 \author{
-MT 06/2015}
+Michael Thrun}

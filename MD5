@@ -1,4 +1,4 @@
-87481d503767dcbc53d30747433e2ed7 *DESCRIPTION
+8b41f016d864884f140d53cfe30e39e8 *DESCRIPTION
 5c7f2924990f7f9b1384e85a378408ac *NAMESPACE
 291e9d4e60fd0125a8d3f020e068d808 *R/CCA.R
 94b417662d1c4aa2b421f12c0b5eb959 *R/Delaunay4Points.R
@@ -30,15 +30,15 @@ b1b0d6aff9a59b3e393ff4c6d351e0b4 *man/MDS.Rd
 27f211cfed36f4deb373ca4c16519442 *man/NeRV.rd
 67b13f3105c280edfba692347db28d74 *man/PCA.Rd
 eea5276906ff8d92e546fd2ce99d7cc7 *man/PlotProjectedPoints.Rd
-e69ea2c4e5b500856135e7067d42d648 *man/ProjectionBasedClustering-package.Rd
+7ecfb03b765eb5b7f41b7e5ae9f78ae4 *man/ProjectionBasedClustering-package.Rd
 805cc5d8cbbaa0681867f6ff65e9d9f5 *man/ProjectionBasedClustering.Rd
-46e0701c33c3284fa62ce76c63e82af1 *man/ProjectionPursuit.Rd
+84b44a68298660b976cb56098106a1c2 *man/ProjectionPursuit.Rd
 fb29b547752dd98543a57c7543ea0df5 *man/SammonsMapping.Rd
 6a8f7d8ad9bb648180d4c77b09e2767c *man/ShepardDiagram.Rd
 7b21d4a0ba850d8c7411e37026ff7f6d *man/ShortestGraphPathsC.Rd
-e70d7ce003d342e88dbeab41ea3356a5 *man/klrank.Rd
 ab56be5ae0c981bc41664e43631d44e1 *man/tSNE.Rd
 4d14838b8f370366b90c327a3b8a1f45 *src/DijkstraSSSP.cpp
+a1e86627020c43852446a8e2c2141b3f *src/Makevars
 0984675182a015e3c3463cbb736f4a93 *src/Makevars.win
 2b3db55817d37d2d481dd84286e42de8 *src/NeRV.cpp
 f2e9b70d50ca20f1bce77555f757bf89 *src/RcppExports.cpp
