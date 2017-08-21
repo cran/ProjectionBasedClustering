@@ -34,22 +34,24 @@ Cls                 [1:n] vector with selected classes of the bestmatches. You c
 \examples{
 data('Hepta')
 #2d projection
-\dontrun{projectionpoints=NeRV(Hepta$Data)} 
+\donttest{projectionpoints=NeRV(Hepta$Data)
 #Computation of Generalized Umatrix
-\dontrun{visualization=GeneralizedUmatrix(Data = Hepta$Data,projectionpoints)}
+visualization=GeneralizedUmatrix(Data = Hepta$Data,projectionpoints)
 # Visualizuation of GenerelizedUmatrix
-\dontrun{plotTopographicMap(visualization$Umatrix,visualization$Bestmatches)}
+library(GeneralizedUmatrix)
+plotTopographicMap(visualization$Umatrix,visualization$Bestmatches)
 # Automatic Clustering
-\dontrun{LC=c(visualization$Lines,visualization$Columns)}
+LC=c(visualization$Lines,visualization$Columns)
 # number of Cluster from dendrogram or visualization (PlotIt=T)
-\dontrun{#Cls=ProjectionBasedClustering(k=7, Hepta$Data, 
+Cls=ProjectionBasedClustering(k=7, Hepta$Data, 
 
-visualization$Bestmatches, LC,PlotIt=T)}
+visualization$Bestmatches, LC,PlotIt=T)
 # Verification
-\dontrun{plotTopographicMap(visualization$Umatrix,visualization$Bestmatches,Cls)}
+plotTopographicMap(visualization$Umatrix,visualization$Bestmatches,Cls)
+}
 }
 \references{
-[Thrun/Ultsch, 2017] Thrun, M.C., Ultsch, A.: Projection based Clustering, accepted for publication at Conf. Int. Federation of Classification Societies, Tokyo, 2017.
+[Thrun/Ultsch, 2017] Thrun, M.C., Ultsch, A.: Projection based Clustering, Conf. Int. Federation of Classification Societies (IFCS),DOI:10.13140/RG.2.2.13124.53124, Tokyo, 2017.
 
 [Thrun, 2017]   Thrun, M. C.:A System for Projection Based Clustering through Self-Organization and Swarm Intelligence, (Doctoral dissertation), Philipps-Universität Marburg, Marburg, 2017.
 }
@@ -59,7 +61,8 @@ Michael Thrun
 \note{
 If you used pswarm with distance matrix instead of a data matrix you can mds transform your distances into data. The correct dimension can be found through the Sheppard diagram or kruskals stress.
 
-Often it is better to mark the outliers  manually after the prozess of clustering; use in this case the visualization \code{plotTopographicMap} of the package GeneralizedUmatrix. If you would like to mark the outliers interactivly in the visualization use the Umatrix package in \url{https://www.uni-marburg.de/fb12/datenbionik/software-en}
+Often it is better to mark the outliers  manually after the prozess of clustering; use in this case the visualization \code{plotTopographicMap} of the package GeneralizedUmatrix. If you would like to mark the outliers interactivly in the visualization use 
+the \code{interactiveClustering} function.
 }
 \keyword{swarm}
 \keyword{Databonic swarm}
