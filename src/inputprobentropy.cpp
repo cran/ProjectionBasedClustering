@@ -23,7 +23,7 @@ InputProbEntropy::evaluate (const DataMatrix & sigma)
   {
     if (j != index)
     {
-      entropy -= prob (index, j) * log (prob (index, j)) / log (2.0);
+      entropy -= prob (index, j) * std::log (prob (index, j)) / std::log (2.0);
     }
   }
 
@@ -34,7 +34,7 @@ InputProbEntropy::evaluate (const DataMatrix & sigma)
 
 
 InputProbEntropy::InputProbEntropy (size_t effectiveNeighborhoodSize, const size_t index, NeRVProbability & prob):desiredEntropy ((effectiveNeighborhoodSize <
-        2) ? 1.0 : log (effectiveNeighborhoodSize) / log (2.0)),
+        2) ? 1.0 : std::log (effectiveNeighborhoodSize) / std::log (2.0)),
     index (index), prob (prob)
 {
 }

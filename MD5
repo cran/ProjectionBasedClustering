@@ -1,6 +1,7 @@
-355833aa9a2f748b37ad1c908f9388ed *DESCRIPTION
+e89542baf1b9a103b8bdb3ecaaa89f86 *DESCRIPTION
 f9875297601fdc0ade8e2dc7110dc23a *NAMESPACE
 291e9d4e60fd0125a8d3f020e068d808 *R/CCA.R
+3a7a199fa0f3f7e3f99004555fa2dd56 *R/DefaultColorSequence.R
 94b417662d1c4aa2b421f12c0b5eb959 *R/Delaunay4Points.R
 5a2d76df8ef3ffb4f6718478fa932667 *R/ICA.R
 7afd325a7b98b814a885728b45c774e7 *R/Isomap.R
@@ -70,14 +71,14 @@ a7f1f3a2df820d5865b50c36af226655 *src/exception.cpp
 991562b2d921dab5a34a9e65f06fbc17 *src/exception.h
 8ea1ffed4921b13f5384508ce677094c *src/goldensectionsearch.cpp
 95d8277b36ab94a3b54afc791f050dac *src/goldensectionsearch.h
-a6e881f56492628bbdb0bdb34248be63 *src/inputprobentropy.cpp
+c0164ae77895e946eaf56ca9a7c2532b *src/inputprobentropy.cpp
 23b47fcc6567c6f48231d0a53d17a69c *src/inputprobentropy.h
-72712a068881a0b33c567492217fe640 *src/klmeasure.cpp
-72aef2127426a5ee3d9a7e12eb987a29 *src/klrank.cpp
+268b4693e178a23754b1233aa7e7ad9b *src/klmeasure.cpp
+83bee2f2492bb691cc9b0eacb40bcd16 *src/klrank.cpp
 df3e70f352b1709039d1daadb058376f *src/linesearch.h
 3d175d892a2743c4cf65d4acf2a7d9f8 *src/measure.h
 366cc262c09f5feac6d0dd12674de11b *src/metric.h
-83bffdfacbac6d233c5cd2fdba4c9c6c *src/nervcostfunction.cpp
+33203c072b1821a9b11d9c57fc2b1419 *src/nervcostfunction.cpp
 3b5799757473669877d7f78898a0afec *src/nervcostfunction.h
 20134b030a4a14cc22f34f4689c2ea5a *src/nervoptstrat.cpp
 8c93dfdfec7ba0e1205ac4bc8ac2c059 *src/nervoptstrat.h
