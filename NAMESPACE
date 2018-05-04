@@ -12,6 +12,8 @@ export(ProjectionPursuit)
 export(SammonsMapping)
 export(tSNE)
 export(interactiveClustering)
+export(interactiveGeneralizedUmatrixIsland)
+
 import(shiny)
 importFrom("stats", "quantile")
 importFrom("shinyjs","hide","useShinyjs","toggle", "hidden", "enable", "disable")

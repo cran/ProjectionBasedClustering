@@ -1,5 +1,5 @@
-2d83d151f9e9a9f737a9f0d51f8eb289 *DESCRIPTION
-19e03f8cc11bb945df2fbc695768f536 *NAMESPACE
+8740c9b077fce0f37b53023553061cbe *DESCRIPTION
+05156a37690d40d3b5f26fe67bb3a07c *NAMESPACE
 291e9d4e60fd0125a8d3f020e068d808 *R/CCA.R
 94b417662d1c4aa2b421f12c0b5eb959 *R/Delaunay4Points.R
 5a2d76df8ef3ffb4f6718478fa932667 *R/ICA.R
@@ -31,7 +31,7 @@ a9a579993c0983b920714120924c627e *man/MDS.Rd
 946bf7da3272f847e4eafe21102b41b7 *man/NeRV.rd
 51b2238737f72c52c1363311c5c6e68d *man/PCA.Rd
 eea5276906ff8d92e546fd2ce99d7cc7 *man/PlotProjectedPoints.Rd
-35605560b632490ec632b5c3801337ff *man/ProjectionBasedClustering-package.Rd
+ec426952306cfd479b20b38a9948aa18 *man/ProjectionBasedClustering-package.Rd
 31e63c77c4de5a8d4d3bcf69f53ca725 *man/ProjectionBasedClustering.Rd
 e8c89b83528e642c23bdf226aedc0cb2 *man/ProjectionPursuit.Rd
 f723910817352621a58fea89046c5c09 *man/SammonsMapping.Rd
