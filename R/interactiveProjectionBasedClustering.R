@@ -5,18 +5,20 @@ interactiveProjectionBasedClustering <-
     Umatrix = NULL 
     bestmatches = NULL
     bmus = NULL 
-    mergei = NULL 
+    mergei = 1:nrow(Data) #give back all cases in one group, if function exists before clustering and no cls given
     ubmus = NULL 
     udim = NULL 
     uniq = NULL 
     outplot = NULL 
     oubmus = NULL 
-    DefaultColorSequence= DefaultColorSequence
+    LC=NULL
     imx<-NA
     
+    if(is.null(Cls))#give back all cases in one group, if function exists before clustering and no cls given
+      Cls=rep(1,nrow(Data))
+     
     # Original CLS speichern.
-    ClsO=Cls
-    
+    ClsO=Cls 
     ## Helper functions ####
     
     # Normalizes the U-Matrix. As used in plotmatrix
@@ -65,35 +67,8 @@ interactiveProjectionBasedClustering <-
       Key=1:nrow(Data)
       
     }
-    ## Schritt 1.9: Prepare GUI things.
-    colormap <- c("#3C6DF0", "#3C6DF0", "#3C6DF0", "#006602",
-                  "#006A02", "#006D01", "#007101", "#007501", "#007901",
-                  "#007C00", "#008000", "#068103", "#118408", "#0B8305",
-                  "#17860A", "#1D870D", "#228810", "#288A12", "#2E8B15",
-                  "#348D18", "#398E1A", "#3F8F1D", "#45911F", "#4A9222",
-                  "#509325", "#569527", "#5C962A", "#61982C", "#67992F",
-                  "#6D9A32", "#729C34", "#789D37", "#7E9F39", "#84A03C",
-                  "#89A13F", "#8FA341", "#95A444", "#9AA547", "#A0A749",
-                  "#A6A84C", "#ACAA4E", "#B1AB51", "#B7AC54", "#BDAE56",
-                  "#C3AF59", "#C8B15B", "#CEB25E", "#CBAF5C", "#C8AC59",
-                  "#C5A957", "#C3A654", "#C0A352", "#BDA050", "#BA9D4D",
-                  "#B7994B", "#B49648", "#B29346", "#AF9044", "#AC8D41",
-                  "#A98A3F", "#A6873C", "#A3843A", "#A08138", "#9E7E35",
-                  "#9B7B33", "#987830", "#95752E", "#92722B", "#8F6E29",
-                  "#8C6B27", "#8A6824", "#876522", "#84621F", "#815F1D",
-                  "#7E5C1B", "#7B5918", "#795616", "#765313", "#714E0F",
-                  "#6C480B", "#674307", "#6F4D15", "#785822", "#806230",
-                  "#896D3E", "#91774C", "#998159", "#A28C67", "#AA9675",
-                  "#B3A183", "#BBAB90", "#C3B59E", "#CCC0AC", "#D4CABA",
-                  "#DDD5C7", "#E5DFD5", "#E7E1D8", "#E9E4DB", "#EBE6DE",
-                  "#ECE8E1", "#EEEAE4", "#F0EDE7", "#F2EFEA", "#F4F1ED",
-                  "#F6F4F0", "#F8F6F3", "#F9F8F6", "#FBFAF9", "#FDFDFC",
-                  "#FFFFFF", "#FFFFFF", "#FEFEFE", "#FEFEFE", "#FEFEFE",
-                  "#FDFDFD", "#FDFDFD", "#FDFDFD", "#FCFCFC", "#FCFCFC",
-                  "#FCFCFC", "#FBFBFB", "#FBFBFB", "#FBFBFB", "#FAFAFA",
-                  "#FAFAFA", "#FAFAFA", "#F9F9F9", "#F9F9F9", "#FFFFFF",
-                  "#FFFFFF")
-    
+
+    colormap=GeneralizedUmatrix::UmatrixColormap
     ax <- list(
       title = "",
       zeroline = FALSE,
@@ -127,7 +102,7 @@ interactiveProjectionBasedClustering <-
     }
     
     ## Schritt 2: shiny shiny interactive tool ####
-    ui <- shinyUI(
+    ui <- shiny::shinyUI(
       
       tagList(
         ## Script for resizing plotly plots
@@ -146,20 +121,20 @@ interactiveProjectionBasedClustering <-
                               Shiny.onInputChange("dimension", dimension);
                               });
                               ')),
-        # shinythemes::themeSelector(),
+
         navbarPage(
-          
+          title = "Interactive Projection-Based Clustering",
           theme = shinythemes::shinytheme("flatly"),
-          
-          "Interactive Projection-based Clustering",
-          tabPanel(
-            "2D",
-            sidebarPanel(tabsetPanel(
+            tabPanel(title = "2D                ",
+            sidebarPanel(
+              width = 3,
+              height="100%",
+              tabsetPanel(
+                type = "tabs",
               tabPanel(
-                "Projection",
-                
-                tags$h5("Choose Method"),
-                selectInput('projections','Projection',choices=c('PCA','CCA','ICA','MDS','NeRV','ProjectionPursuit','SammonsMapping','tSNE'),selected='PCA'),
+                title = "Projection",
+                h3(" "),
+                selectInput('projections','Choose Projection Method',choices=c('PCA','CCA','ICA','MDS','NeRV','ProjectionPursuit','SammonsMapping','tSNE'),selected='NeRV'),
                 
                 # Further Parameter-Querys for Projections
                 #PCA
@@ -232,42 +207,56 @@ interactiveProjectionBasedClustering <-
                 conditionalPanel(condition ="input.projections=='tSNE'", 
                                  checkboxInput("tSNEWhite", "Whitening", value = FALSE, width = NULL)),
                 
-                actionButton("generate", HTML("Visual Analytics <br/> with g. U-Matrix")),
+                actionButton("generate", HTML("Visual Analytics <br/> with g. U-Matrix"), icon = icon("calculator")),
                 tags$hr(),
-                numericInput("markerSize", "Marker Size", value=7, min = 1, max = 30, step = 0.1)
+                numericInput("markerSize", "Bestmatch Size", value=7, min = 1, max = 30, step = 0.1),
+                checkboxInput(inputId = 'Toroid',label = 'Toroidal',value = FALSE)
+              ),
+  
+              tabPanel(
+                title = "Clustering",
+                h3(" "),
                 
-              ),
-              tabPanel(
-                "Information",
-                htmlOutput("umxinfo"),
-                tags$h5("Corresponding Data"),
-                actionButton("pointinfo", "View selected"),
-                tags$hr()
-              ),
-              tabPanel(
-                "Clustering Tools",
-                h4("New Clusters:"),
-                actionButton(inputId = "Clust", label = "Create cluster"),
-                h4("Modify existing:"),
+                                h5("Execute Interactive",align="center"),
+                actionButton(inputId = "Clust", label = "Create Cluster", icon = icon("location-arrow")),
+               
+                h4("--"),
+                h5("Modify Existing",align="center"),
                 selectInput(
                   inputId = "ClsSelect",
                   label = "Select Class",
                   choices = unique(Cls)
                 ),
-                actionButton(inputId = "AddToCls", label = "Add selected"),
+                actionButton(inputId = "AddToCls", label = "Add Selected", icon = icon("plus-circle")),
+                actionButton(inputId = "ClearAll", label = "Clear All", icon = icon("undo-alt")),
+             
+                h4("--"),
+                h5("Execute Automatic",align="center"),
+                numericInput(inputId = "NumberClusters", 
+                             label ="No. Clusters", value = 1),
+                checkboxInput(inputId = 'StructureType',label = 'Change Structure Type',value = TRUE),
+                actionButton(inputId = "Clustering", label = "Clustering", icon = icon("calculator")),
+
+                tags$hr()
+                
+              ),
+              tabPanel(
+                title = "Info",
+                h3(" "),
+                htmlOutput("umxinfo"),
+                tags$h5("Corresponding Data"),
+                actionButton("pointinfo", "View selected"),
                 tags$hr()
               )
             ),
             actionButton(
               inputId = "Exit",
               label = "Exit",
-              class = "btn-primary"
+              class = "btn-primary", icon = icon("window-close")
+            )
+            )#end sidebar pannel
             ),
-            width = 3,
-            height="100%")
-            ,
-            mainPanel(
-              
+              mainPanel(
               
               plotly::plotlyOutput("Plot",
                                    # height =  
@@ -275,19 +264,15 @@ interactiveProjectionBasedClustering <-
                                    # width = 
                                    #   udim[2] * 5 * (quadtile + 1)),
                                    width = "auto"),
-              bsModal("printdata",
-                      "Data corresponding to selected points",
-                      "pointinfo",
-                      size = "large",
-                      shiny::dataTableOutput("dataout"))
-              ,
+          
               width = 9,
               height = "100%"
             )
             
-          )
-        )
-      ))
+
+        )#end navbarPage
+      )# end tagList
+      )# end shiny::shinyUI
     
     server <- shiny::shinyServer(function(input, output, session) {
       
@@ -316,118 +301,141 @@ interactiveProjectionBasedClustering <-
         )
         return(Clsids)
       }
-      
-      doplot <- function(Cls) {
-        
-        #Handle Color:
-        
-        quants2 = quantile(as.vector(Umatrix), c(0.01, 0.5, 0.99))
-        minU2 = quants2[1]
-        maxU2 = quants2[3]
-        HeightScale = round(maxU2/(2 * max(minU2, 0.05)), 0)
-        stretchFactor = sqrt(nrow(Umatrix)^2 + ncol(Umatrix)^2)/sqrt(50^2 + 80^2)
-        Nrlevels2 = 2 * HeightScale * stretchFactor
-        # levelBreaks <- seq(0, 1.000001, length.out = (Nrlevels2 + 1))
-        # splittedGeneralizedUmatrix = Umatrix
-        # for (i in 1:Nrlevels2) {
-        #   splittedGeneralizedUmatrix[(Umatrix >= levelBreaks[i]) &
-        #                                (Umatrix <= levelBreaks[i + 1])] = levelBreaks[i]
-        # }
-        # splittedGeneralizedUmatrix = (floor(splittedGeneralizedUmatrix *
-        #                                       length(colormap))) + 1
-        # color = colormap[splittedGeneralizedUmatrix]
-        # color = rep(color,4)
-        # test <- matrix(color,ncol = udim[2], nrow = udim[1])
-        # test <- cbind(rbind(test,test),rbind(test,test))
-        
-        
-        # dmx  <- cbind(z,z)
-        
-        qdim <- udim * 2
-        # Umatrix <- Umatrix * HeightScale * stretchFactor
-        dmx  <- cbind(Umatrix,Umatrix)
-        qmx  <- rbind(dmx, dmx)
-        dbm  <- rbind(ubmus, cbind(ubmus[, 1], ubmus[, 2] + udim[2]))
-        qbm  <- rbind(dbm, cbind(dbm[, 1] + udim[1], dbm[, 2]))
-        
-        #   qmx = matrixnormalization(qmx)
-        
-        plotumx <- qmx
-        plotbmus <- qbm
-        plotdim <- qdim
-        plotCls <- rep(Cls, 4)
-        
-        
-        output$Plot <- plotly::renderPlotly({
-          
-          width = (0.95*as.numeric(input$dimension[1]))
-          height = udim[1]/udim[2] * (width-80)
-          
-          plt <- plotly::plot_ly(width = width, height = height*0.75) %>%
-            plotly::add_contour(
-              x = 1:plotdim[1],
-              y = 1:plotdim[2],
-              z = plotumx,
-              showscale=FALSE,
-              line = list(
-                color = 'black',
-                width = 0.5),
-              contours = list(
-                start = 0,
-                end = 1,
-                size = 1/15
-              ),
-              # colors = color,
-              colors = colorRamp(colormap[c(rep(3,6),seq(from = 4,to = length(colormap)-30,length.out = ceiling(Nrlevels2 +1)-7),length(colormap))]),
-              name = "UMatrix"
-              # , showscale = FALSE
-            )
-          
-          # plt <- plotly::plot_ly(width = 2*width, height = 2*height,type = "contour",
-          #                         x = 1:plotdim[1],
-          #                         y = 1:plotdim[2],
-          #                         z = ~plotumx,
-          #                         autocontour = TRUE,
-          #                         line = list(smoothing = 0.85))
-          
-          addclass <- function(class, plot) {
-            inds <- which(plotCls == class)
-            plot <- plot %>% plotly::add_markers(
-              x = plotbmus[inds, 2],
-              y = plotbmus[inds, 1],
-              marker = list(
-                size = input$markerSize,
-                color = DefaultColorSequence[class],
-                line = list(color = "rgba(80, 80, 80, .8)",
-                            width = 1)
-              ),
-              name = paste("Class", class)
-            )
-            return(plot)
-          }
-          for (class in unique(plotCls)){
-            plt <- addclass(class, plt)
-          }
-          
-          
-          plt <- plt %>% plotly::layout(#title <- "Drop plot title here",
-            #bgcolor = "rgb(244, 244, 248)",
-            xaxis = ax,
-            yaxis = ay,
-            dragmode ='lasso'
-            #, showlegend = FALSE
-          )
-          updateSelectInput(
-            session,
-            "ClsSelect",
-            label = "Select Class",
-            choices = unique(Cls)
-          )
-          outplot <<- plt
-          plt
-        }
-        )
+      TopographicMapTopView_hlp=function(Cls,Tiled){
+        #@TIM: die Parameteruebergabe Umatrix,ubmus muss du besser loesen. aus dem globalen workspace das zuu nehmen ist sehr schlecht
+        # das interakCtive anpassen an fenster groesse erfordert nun ein button click, weis nicht wieso
+        # pruef auch das mal bitte 
+  
+        V=GeneralizedUmatrix::TopviewTopographicMap(GeneralizedUmatrix = Umatrix,BestMatchingUnits = ubmus,
+                   Cls=Cls,Tiled=Tiled,BmSize = input$markerSize,ShinyBinding=TRUE,ShinyDimension=input$dimension[1],Session=session)
+     
+        output$Plot=V$Rendered
+        outplot<<-V$single
       }
+      # TopographicMapTopView_hlp <- function(Cls,Toroid=FALSE) {
+      #   
+      #   #Handle Color:
+      #   addclass <- function(class, plotbmus,plot,bmu_cols,markerSize) {
+      #     inds <- which(plotCls == class)
+      #     plot <- plotly::add_markers(plot,
+      #                                 x = plotbmus[inds, 2],
+      #                                 y = plotbmus[inds, 1],
+      #                                 marker = list(
+      #                                   size = markerSize,
+      #                                   color = bmu_cols[class],
+      #                                   line = list(color = "rgba(80, 80, 80, .8)",
+      #                                               width = 1)
+      #                                 ),
+      #                                 name = paste("Cluster", class)
+      #     )
+      #     return(plot)
+      #   }
+      #   
+      #   quants2 = quantile(as.vector(Umatrix), c(0.01, 0.5, 0.99))
+      #   minU2 = quants2[1]
+      #   maxU2 = quants2[3]
+      #   HeightScale = round(maxU2/(2 * max(minU2, 0.05)), 0)
+      #   stretchFactor = sqrt(nrow(Umatrix)^2 + ncol(Umatrix)^2)/sqrt(50^2 + 80^2)
+      #   Nrlevels2 = 2 * HeightScale * stretchFactor
+      #   # levelBreaks <- seq(0, 1.000001, length.out = (Nrlevels2 + 1))
+      #   # splittedGeneralizedUmatrix = Umatrix
+      #   # for (i in 1:Nrlevels2) {
+      #   #   splittedGeneralizedUmatrix[(Umatrix >= levelBreaks[i]) &
+      #   #                                (Umatrix <= levelBreaks[i + 1])] = levelBreaks[i]
+      #   # }
+      #   # splittedGeneralizedUmatrix = (floor(splittedGeneralizedUmatrix *
+      #   #                                       length(colormap))) + 1
+      #   # color = colormap[splittedGeneralizedUmatrix]
+      #   # color = rep(color,4)
+      #   # test <- matrix(color,ncol = udim[2], nrow = udim[1])
+      #   # test <- cbind(rbind(test,test),rbind(test,test))
+      #   
+      #   
+      #   # dmx  <- cbind(z,z)
+      #   
+      #   
+      #   # Umatrix <- Umatrix * HeightScale * stretchFactor
+      #   if(isTRUE(Toroid)){
+      #   qdim <- udim * 2
+      #   dmx  <- cbind(Umatrix,Umatrix)
+      #   qmx  <- rbind(dmx, dmx)
+      #   dbm  <- rbind(ubmus, cbind(ubmus[, 1], ubmus[, 2] + udim[2]))
+      #   qbm  <- rbind(dbm, cbind(dbm[, 1] + udim[1], dbm[, 2]))
+      #   plotumx <- qmx
+      #   plotbmus <- qbm
+      #   plotCls <- rep(Cls, 4)
+      #   }else{
+      #     plotumx <- Umatrix
+      #     plotbmus <- ubmus
+      #     plotCls <- Cls
+      #     qdim <- udim 
+      #   }
+      #   #   qmx = matrixnormalization(qmx)
+      #   
+      #   bmu_cols=ProjectionBasedClustering::DefaultColorSequence
+      #   bmu_cols=bmu_cols[-5] #green is not visible in plotly
+      #   plotdim <- qdim
+      #  
+      #   
+      #   
+      #   output$Plot <- plotly::renderPlotly({
+      #     
+      #     width = (0.95*as.numeric(input$dimension[1]))
+      #     height = udim[1]/udim[2] * (width-80)
+      #     
+      #     plt <- plotly::plot_ly(width = width, height = height*0.75)
+      #     plt <- plotly::add_contour(plt,
+      #         x = 1:plotdim[1],
+      #         y = 1:plotdim[2],
+      #         z = plotumx,
+      #         showscale=FALSE,
+      #         line = list(
+      #           color = 'black',
+      #           width = 0.5),
+      #         contours = list(
+      #           start = 0,
+      #           end = 1,
+      #           size = 1/15
+      #         ),
+      #         # colors = color,
+      #         colors = colorRamp(colormap[c(rep(3,6),seq(from = 4,to = length(colormap)-30,length.out = ceiling(Nrlevels2 +1)-7),length(colormap))]),
+      #         name = "UMatrix"
+      #         # , showscale = FALSE
+      #       )
+      #     
+      #     # plt <- plotly::plot_ly(width = 2*width, height = 2*height,type = "contour",
+      #     #                         x = 1:plotdim[1],
+      #     #                         y = 1:plotdim[2],
+      #     #                         z = ~plotumx,
+      #     #                         autocontour = TRUE,
+      #     #                         line = list(smoothing = 0.85))
+      #     
+      # 
+      #     for (class in unique(plotCls)){
+      #       plt <- addclass(class,plotbmus, plt,bmu_cols,input$markerSize)
+      #     }
+      #     
+      #     
+      #     plt <- plotly::layout(#title <- "Drop plot title here",
+      #       #bgcolor = "rgb(244, 244, 248)",
+      #       plt,
+      #       xaxis = ax,
+      #       yaxis = ay,
+      #       dragmode ='lasso',
+      #       legend=list(orientation='h')
+      #       #, showlegend = FALSE
+      #     )
+      #     updateSelectInput(
+      #       session,
+      #       "ClsSelect",
+      #       label = "Select Class",
+      #       choices = unique(Cls)
+      #     )
+      #     outplot <<- plt
+      #     plt
+      #   }
+      #   )
+      # }#end TopographicMapTopView_hlp
       
       selectedpoints <- function() {
         
@@ -468,11 +476,11 @@ interactiveProjectionBasedClustering <-
                     <table>
                     <tr>
                     <th>Lines: </th>
-                    <td>", udim[1], "</td>
+                    <td>",  udim[1], "</td>
                     </tr>
                     <tr>
                     <th>Columns: </th>
-                    <td>", udim[2], "</td>
+                    <td>",  udim[2], "</td>
                     </tr>
                     <tr>
                     <th>Bestmatches: </th>
@@ -488,10 +496,10 @@ interactiveProjectionBasedClustering <-
       # Button: View Selected
       observeEvent(input$pointinfo,{
         seldat <- selectedpoints()
-        output$dataout <- renderDataTable({
-          seldat
-        })
-      })
+        output$dataout <- renderDataTable({seldat})
+        shiny::showModal(shiny::modalDialog(title ="Data corresponding to selected points", shiny::dataTableOutput("dataout"), easyClose = TRUE )
+      )})
+
       
       # Button: Merge Clusters
       observeEvent(input$Merge, {
@@ -503,21 +511,25 @@ interactiveProjectionBasedClustering <-
         Clss <- unique(Cls[points])
         ids <- which(Cls %in% Clss)
         Cls[ids] <- min(Clss)
-        Cls <- getUniquePoints(Cls)$mergeind
-        Cls <<- Cls
-        doplot(Cls)
+        Cls <<- getUniquePoints(Cls)$mergeind
+        TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
       })
       
+      #Toroid
+      observeEvent(input$Toroid, {
+        if(!is.null(Umatrix)) #wir direkt bei start augeprueft
+          TopographicMapTopView_hlp(Cls,input$Toroid) #shortcut: Umatrix muss existieren
+      })
       
       # Button: Create new cluster
       observeEvent(input$Clust, {
         Clsids <- selectedids()
-        if (!is.na(Clsids)) {
+        if (all(!is.na(Clsids))) { 
           id <- max(Cls) + 1
           points <- Clsids
           Cls[points] <- id
-          doplot(Cls)
-          Cls <<- Cls
+          Cls <<- getUniquePoints(Cls)$mergeind
+          TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
         }
       })
       
@@ -527,16 +539,45 @@ interactiveProjectionBasedClustering <-
         id <- input$ClsSelect
         Clsids <- selectedids()
         
-        if (!is.na(Clsids)){
+        if (all(!is.na(Clsids))){ 
           Cls[Clsids] <- id
           Cls <- getUniquePoints(as.numeric(Cls))$mergeind
           Cls <<- Cls
-          doplot(Cls)
+          TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
         }
       })
       
+      observeEvent(input$ClearAll, {
+        ind=getUniquePoints(data = bestmatches)$sortind
+        Cls <<-rep(1,length(ind))
+        TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
+
+      })
+      
+      ##AutomaticClustering ----
+      observeEvent(input$Clustering, {
+        if(!is.null(Umatrix)){
+          #wir direkt bei start augeprueft
+          #shortcut: Umatrix muss existieren
+          Clsfull <- ProjectionBasedClustering::ProjectionBasedClustering(input$NumberClusters,
+                                            Data = Data,
+                                            BestMatches = bestmatches,
+                                            LC = LC,
+                                            StructureType = input$StructureType,
+                                            PlotIt = FALSE
+                                            )
+          ind=getUniquePoints(data = bestmatches)$sortind
+          Cls <<-Clsfull[ind] #intern unique cls mitfueren
+          TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
+        } 
+ 
+      })
+      
+      
       # Calculate Projection and GeneralizedUmatrix and plot result.
       observeEvent(input$generate,{
+        
+        shiny::showModal(shiny::modalDialog("Please wait while the Generalized U-matrix is being calculated",style = "font-size:20px", easyClose = TRUE))
         
         type=input$projections 
         k=2
@@ -561,13 +602,16 @@ interactiveProjectionBasedClustering <-
           Cls <<- Cls[uniq$mergeind]
         }
         
-        
+        ## Generalized Umatrix ----
         newU=GeneralizedUmatrix(Data=Data,ProjectedPoints = pData,Cls=Cls)
         Umatrix <<- newU$Umatrix
         bestmatches <<- newU$Bestmatches
         createParams(Umatrix, bestmatches,Cls = Cls)
+        LC <<-c(newU$Lines,newU$Columns)
+        TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
         
-        doplot(Cls)
+        shiny::removeModal()
+        
       })
       
       
@@ -576,7 +620,7 @@ interactiveProjectionBasedClustering <-
       observeEvent(input$Exit, {
         Cls=normCls(Cls[mergei])$normalizedCls
         names(Cls)=Key
-        stopApp(list(Cls = Cls, plot = outplot))
+        stopApp(list(Cls = Cls, Plot = outplot,Umatrix=Umatrix, Bestmatches=bestmatches))
       })
     })
     
@@ -605,7 +649,7 @@ getUniquePoints <- function(data,mindist = 1e-10){
   
   
   # when data is a vector, convert to matrix
-  if (class(data) == "numeric" || class(data) == "complex") {
+  if (methods::is(data,"numeric") || methods::is(data,"complex")) {
     data <- matrix(data, ncol = 1)
   } else if (class(data) == "data.frame") {
     data <- as.matrix(data)
@@ -683,7 +727,7 @@ getUniquePoints <- function(data,mindist = 1e-10){
     )
   )
   
-}
+} # end fun bestmatches
 
 normCls <- function(Cls) {
   #E<-normCls(Cls);
