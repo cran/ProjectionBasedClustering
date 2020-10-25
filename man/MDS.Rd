@@ -52,7 +52,7 @@ A wrapper for \code{cmdscale}
 data('Hepta')
 Data=Hepta$Data
 
-Proj=ICA(Data)
+Proj=MDS(Data)
 
 \dontrun{
 PlotProjectedPoints(Proj$ProjectedPoints,Hepta$Cls)
@@ -62,3 +62,6 @@ PlotProjectedPoints(Proj$ProjectedPoints,Hepta$Cls)
 \keyword{MDS}
 
 \concept{Classical multidimensional scaling}
+\concept{Projection Method}
+\concept{Dimensionality Reduction}
+\keyword{DR}

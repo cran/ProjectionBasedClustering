@@ -1,9 +1,30 @@
-interactiveProjectionBasedClustering <-
-  function(Data, Cls=NULL) {
+IPBC=interactiveProjectionBasedClustering = function(Data, Cls=NULL) {
 
+    ## Schritt 0: Check and sanetize input ####
+    if (missing(Data))
+      stop("No data was given as input")
+    
+    if (!inherits(Data,"matrix")){
+      warning("Input data must be a matrix, assuming data frame and calling as.matrix()")
+      Data=as.matrix(Data)
+    }
+    
+    
+    Key=rownames(Data)
+    if(is.null(Key)){
+      warning('"Data" has no rownames. Setting Key to 1:NoOfCases and Naming Output "Cls" accordingly.')
+      Key=1:nrow(Data)
+      
+    }
     # Parameter initialisieren
+    LastProjectionMethodUsed=NULL
+    BestMatchesNotExtended=NULL
+    UmatrixNotExtended=NULL
+   
     Umatrix = NULL 
     bestmatches = NULL
+    Umatrix4Toroid =NULL
+    bestmatches4Toroid =NULL
     bmus = NULL 
     mergei = 1:nrow(Data) #give back all cases in one group, if function exists before clustering and no cls given
     ubmus = NULL 
@@ -11,6 +32,7 @@ interactiveProjectionBasedClustering <-
     uniq = NULL 
     outplot = NULL 
     oubmus = NULL 
+    extendBorders=10
     LC=NULL
     imx<-NA
     
@@ -49,24 +71,6 @@ interactiveProjectionBasedClustering <-
       
       return(Matrix)
     }
-    
-    
-    ## Schritt 0: Check and sanetize input ####
-    if (missing(Data))
-      stop("No data was given as input")
-    
-    if (!inherits(Data,"matrix")){
-      warning("Input data must be a matrix, assuming data frame and calling as.matrix()")
-      Data=as.matrix(Data)
-    }
-    
-    
-    Key=rownames(Data)
-    if(is.null(Key)){
-      warning('"Data" has no rownames. Setting Key to 1:NoOfCases and Naming Output "Cls" accordingly.')
-      Key=1:nrow(Data)
-      
-    }
 
     colormap=GeneralizedUmatrix::UmatrixColormap
     ax <- list(
@@ -92,7 +96,9 @@ interactiveProjectionBasedClustering <-
       uniq  <<- getUniquePoints(bmus)
       ubmus  <<- uniq$unique
       mergei <<- uniq$mergeind
+      
       if (missing(Cls) || length(Cls) != nrow(bestmatches)){
+        
         Cls <<- rep(1, nrow(ubmus))
       } else {
         Cls <<- Cls[uniq$sortind]
@@ -134,7 +140,7 @@ interactiveProjectionBasedClustering <-
               tabPanel(
                 title = "Projection",
                 h3(" "),
-                selectInput('projections','Choose Projection Method',choices=c('PCA','CCA','ICA','MDS','NeRV','ProjectionPursuit','SammonsMapping','tSNE'),selected='NeRV'),
+                selectInput('projections','Choose Projection Method',choices=c('PCA','CCA','ICA','MDS','NeRV','ProjectionPursuit',"Pswarm",'SammonsMapping','UniformManifoldApproximationProjection','tSNE'),selected='NeRV'),
                 
                 # Further Parameter-Querys for Projections
                 #PCA
@@ -166,7 +172,7 @@ interactiveProjectionBasedClustering <-
                 #MDS
                 
                 conditionalPanel(condition ="input.projections=='MDS'", selectInput(
-                  "MDSMethod", "Method", selected="euclidan",
+                  "MDSMethod", "Distance Method", selected="euclidan",
                   c('euclidean','maximum','canberra','manhattan'))),
                 
                 
@@ -190,6 +196,12 @@ interactiveProjectionBasedClustering <-
                 conditionalPanel(condition ="input.projections=='ProjectionPursuit'",
                                  numericInput("PPAlpha", "Alpha", value=1, min = 0.0001, max = NA, step = 0.0001)),
                 
+                #Polar Swarm
+                
+                conditionalPanel(condition ="input.projections=='Pswarm'", selectInput(
+                  "PswarmDistMethod", "Distance Method", selected="euclidan",
+                  c('euclidean','maximum','canberra','manhattan','chord','hellinger','geodesic','kullback','mahalanobis'))),
+                
                 #SammonsMapping
                 
                 conditionalPanel(condition ="input.projections=='SammonsMapping'", selectInput(
@@ -197,7 +209,6 @@ interactiveProjectionBasedClustering <-
                   c('euclidean','maximum','canberra','manhattan'))),
                 
                 #TSNE
-                
                 
                 conditionalPanel(condition ="input.projections=='tSNE'", selectInput(
                   "tSNEMethod", "Method"  , selected = 'logcosh', c('euclidean','maximum','canberra','manhattan'))),
@@ -207,9 +218,20 @@ interactiveProjectionBasedClustering <-
                 conditionalPanel(condition ="input.projections=='tSNE'", 
                                  checkboxInput("tSNEWhite", "Whitening", value = FALSE, width = NULL)),
                 
+                # UniformManifoldApproximationProjection
+                
+                 conditionalPanel(condition ="input.projections=='UniformManifoldApproximationProjection'",
+                                  numericInput("knn", "k nearest neighbors", value=15, min = 2, max = NA, step = 1)),
+                 conditionalPanel(condition ="input.projections=='UniformManifoldApproximationProjection'",
+                                  numericInput("Epochs", "training length, number of epochs", value=200, min = 2, max = NA, step = 1)),
+                
+                #Other things
+                
                 actionButton("generate", HTML("Visual Analytics <br/> with g. U-Matrix"), icon = icon("calculator")),
                 tags$hr(),
                 numericInput("markerSize", "Bestmatch Size", value=7, min = 1, max = 30, step = 0.1),
+                numericInput("ExtendBorders", 'Set Extend Borders "x"', value=10, min = 0, max = 100, step = 1),
+                checkboxInput(inputId = 'ExtendBorders10',label = 'Extend Borders by "x" Lines & Columns',value = FALSE),
                 checkboxInput(inputId = 'Toroid',label = 'Toroidal',value = FALSE)
               ),
   
@@ -300,7 +322,8 @@ interactiveProjectionBasedClustering <-
           }
         )
         return(Clsids)
-      }
+      }#end selectedids
+      
       TopographicMapTopView_hlp=function(Cls,Tiled){
         #@TIM: die Parameteruebergabe Umatrix,ubmus muss du besser loesen. aus dem globalen workspace das zuu nehmen ist sehr schlecht
         # das interakCtive anpassen an fenster groesse erfordert nun ein button click, weis nicht wieso
@@ -321,7 +344,7 @@ interactiveProjectionBasedClustering <-
         output$Plot=Rendered
         outplot<<-plt
        
-      }
+      }#end TopographicMapTopView_hlp
      
       selectedpoints <- function() {
         
@@ -354,9 +377,12 @@ interactiveProjectionBasedClustering <-
             return(opoints) # Beaware: opoints often more than unipointsid
           Data[opoints[, 1],]
         }
-      }
+      } #end helper fun selectedpoints
       
       # HTML Output: Umatrix Properties
+     #  observeEvent(LastProjectionMethodUsed,{ 
+     # if(!is.null(LastProjectionMethodUsed))
+      #ToDo: Currently just works on the first click of info but does not actualize its data.
       output$umxinfo <- renderUI({
         HTML(paste0("
                     <table>
@@ -372,10 +398,22 @@ interactiveProjectionBasedClustering <-
                     <th>Bestmatches: </th>
                     <td>", nrow(bestmatches), "</td>
                     </tr>
+                    <tr>
+                    <th>Last DR method used: </th>
+                    <td>", LastProjectionMethodUsed, "</td>
+                    </tr>
+                    <tr>
+                    <th>No. Clusters: </th>
+                    <td>", length(unique(Cls)), "</td>
+                    </tr>                    
+                    <tr>
+                    <th>Last Structure type used: </th>
+                    <td>",  input$StructureType, "</td>
+                    </tr>  
                     </table>
                     "))
       })
-      
+     # })#end observe info
       observeEvent(input$dimension,{ 
       })
       
@@ -401,10 +439,39 @@ interactiveProjectionBasedClustering <-
         TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
       })
       
-      #Toroid
+      ##Simple Extend ----
+      observeEvent(input$ExtendBorders10, {
+        if(!is.null(Umatrix)){ #wird direkt bei start augeprueft
+          if(input$ExtendBorders10 & isFALSE(input$Toroid)){
+            V=GeneralizedUmatrix::ExtendToroidalUmatrix(Umatrix4Toroid,bestmatches4Toroid,extendBorders)
+            Umatrix<<-V$Umatrix
+            bestmatches<<-V$Bestmatches
+            ClsTemp=Cls#create params overwrites cls as it is not the length of bestmachtes
+            createParams(Umatrix, bestmatches,Cls = Cls)
+            Cls<<-ClsTemp #but in this cases cls is only the length of unique bestmatches, ToDo: kill createParams function anywhere
+            TopographicMapTopView_hlp(Cls,input$Toroid) #shortcut: Umatrix muss existieren
+          }else{
+            bestmatches<<-bestmatches4Toroid
+            Umatrix<<-Umatrix4Toroid
+            ClsTemp=Cls
+            createParams(Umatrix4Toroid, bestmatches4Toroid,Cls = Cls)
+            Cls<<-ClsTemp
+            TopographicMapTopView_hlp(Cls,input$Toroid) #shortcut: Umatrix muss existieren
+          }
+        }
+      })
+      
+      ##Toroidal ----
       observeEvent(input$Toroid, {
-        if(!is.null(Umatrix)) #wir direkt bei start augeprueft
+        if(!is.null(Umatrix)){ #wir direkt bei start augeprueft
+          bestmatches<<-bestmatches4Toroid
+          Umatrix<<-Umatrix4Toroid
+          # print(length(Cls))
+          # createParams(Umatrix4Toroid, bestmatches4Toroid,Cls = Cls)
+          # print(length(Cls))
+          # Cls <<- getUniquePoints(Cls)$mergeind
           TopographicMapTopView_hlp(Cls,input$Toroid) #shortcut: Umatrix muss existieren
+        }
       })
       
       # Button: Create new cluster
@@ -458,28 +525,78 @@ interactiveProjectionBasedClustering <-
         } 
  
       })
+      observeEvent(input$ExtendBorders, {
+        if(!is.null(input$ExtendBorders)){
+                if(is.finite(input$ExtendBorders)){
+                  extendBorders<<-input$ExtendBorders
+                }
+        }
+      })
+      ## ExtendBorders----
+      #ToDo: extend more than once
+      # observeEvent(input$ExtendBorders, {
+      #   if(!is.null(Umatrix)){
+      #     if(!is.null(input$ExtendBorders)){
+      #       if(is.finite(input$ExtendBorders)){
+      #     if(input$ExtendBorders>0){
+      #     extendBorders<<-input$ExtendBorders
+      #     Umatrix<<-cbind(Umatrix[,c((ncol(Umatrix)-extendBorders-1):ncol(Umatrix))],Umatrix,Umatrix[,1:extendBorders])
+      #     Umatrix<<-rbind(Umatrix[c((nrow(Umatrix)-extendBorders-1):nrow(Umatrix)),],Umatrix,Umatrix[1:extendBorders,])
+      #     Umatrix<<-matrixnormalization(Umatrix)
+      #     bmu=bestmatches
+      #     bmu[,1]=bmu[,1]+length(c((nrow(Umatrix)-extendBorders-1):nrow(Umatrix)))
+      #     bmu[,2]=bmu[,2]+length(c((ncol(Umatrix)-extendBorders-1):ncol(Umatrix)))
+      #     bestmatches<<-bmu
+      #     createParams(Umatrix, bestmatches,Cls = Cls)
+      #     extendBorders<<-0
+      #     }
+      #     if(input$ExtendBorders<0){
+      #       extendBorders<<- -(input$ExtendBorders)
+      #       Umatrix<<-Umatrix[-c((nrow(Umatrix)-extendBorders+1):nrow(Umatrix)),]
+      #       Umatrix<<-Umatrix[-c(1:(extendBorders+1)),]
+      #       
+      #       Umatrix<<-Umatrix[,-c((ncol(Umatrix)-extendBorders+1):ncol(Umatrix))]
+      #       Umatrix<<-Umatrix[,-c(1:(extendBorders+1))]#
+      #       Umatrix<<-matrixnormalization(Umatrix)
+      #       bmu=bestmatches
+      #       bmu[,1]=bmu[,1]-length(c((nrow(Umatrix)-extendBorders+1):nrow(Umatrix)))
+      #       bmu[,2]=bmu[,2]-length(c(ncol(Umatrix)-extendBorders+1):ncol(Umatrix))
+      #       bestmatches<<-bmu
+      #       createParams(Umatrix, bestmatches,Cls = Cls)
+      #       extendBorders<<-0
+      #     }
+      #       
+      #   
+      #     TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
+      #     } 
+      #     }
+      #   }
+      # })
       
-      
+      ##Select Projection ----
       # Calculate Projection and GeneralizedUmatrix and plot result.
       observeEvent(input$generate,{
         
         shiny::showModal(shiny::modalDialog("Please wait while the Generalized U-matrix is being calculated",style = "font-size:20px", easyClose = TRUE))
         
         type=input$projections 
-        k=2
+   
         project=function(type){
           switch(type,
                  
-                 PCA = ProjectionBasedClustering::PCA(Data,Center=input$PCACenter,Scale=input$PCAscale,OutputDimension = k,Cls=Cls)$ProjectedPoints,
-                 CCA = ProjectionBasedClustering::CCA(Data,OutputDimension = k,Cls=Cls,Epochs =input$CCAEpochs, method = input$CCAMethod, alpha0=input$CCASteps)$ProjectedPoints,
-                 ICA = ProjectionBasedClustering::ICA(Data,OutputDimension = k,Cls=Cls, Iterations =input$ICAIterations,Alpha = input$ICASteps )$ProjectedPoints,
-                 MDS = ProjectionBasedClustering::MDS(Data,OutputDimension = k,Cls=Cls,  method=input$MDSMethod)$ProjectedPoints,
-                 NeRV = ProjectionBasedClustering::NeRV(Data= Data,OutputDimension = k,Cls=Cls, iterations = input$NERVIterations, lambda = input$NERVLambda, neighbors =input$NERVNeighbors),
-                 ProjectionPursuit= ProjectionBasedClustering::ProjectionPursuit(Data,OutputDimension = k,Cls=Cls, Iterations = input$PPIterations, Indexfunction =input$PPMethod , Alpha =input$PPAlpha )$ProjectedPoints,
-                 SammonsMapping= ProjectionBasedClustering::SammonsMapping(Data,OutputDimension = k,Cls=Cls, method = input$SMMethod)$ProjectedPoints,
-                 tSNE = ProjectionBasedClustering::tSNE(Data,OutputDimension = k,Cls=Cls, method = input$tSNEMethod, Iterations = input$tSNEIterations, Whitening = input$tSNEWhite)$ProjectedPoints
+                 PCA = ProjectionBasedClustering::PCA(Data,Center=input$PCACenter,Scale=input$PCAscale,OutputDimension = 2,Cls=Cls)$ProjectedPoints,
+                 CCA = ProjectionBasedClustering::CCA(Data,OutputDimension = 2,Cls=Cls,Epochs =input$CCAEpochs, method = input$CCAMethod, alpha0=input$CCASteps)$ProjectedPoints,
+                 ICA = ProjectionBasedClustering::ICA(Data,OutputDimension = 2,Cls=Cls, Iterations =input$ICAIterations,Alpha = input$ICASteps )$ProjectedPoints,
+                 MDS = ProjectionBasedClustering::MDS(Data,OutputDimension = 2,Cls=Cls,  method=input$MDSMethod)$ProjectedPoints,
+                 NeRV = ProjectionBasedClustering::NeRV(Data= Data,OutputDimension = 2,Cls=Cls, iterations = input$NERVIterations, lambda = input$NERVLambda, neighbors =input$NERVNeighbors),
+                 ProjectionPursuit= ProjectionBasedClustering::ProjectionPursuit(Data,OutputDimension = 2,Cls=Cls, Iterations = input$PPIterations, Indexfunction =input$PPMethod , Alpha =input$PPAlpha )$ProjectedPoints,
+                 SammonsMapping = ProjectionBasedClustering::SammonsMapping(Data,OutputDimension = 2,Cls=Cls,  method=input$MDSMethod)$ProjectedPoints,
+                 Pswarm= ProjectionBasedClustering::PolarSwarm(Data,Cls=Cls, method = input$PswarmDistMethod)$ProjectedPoints,
+                 tSNE = ProjectionBasedClustering::tSNE(Data,OutputDimension = 2,Cls=Cls, method = input$tSNEMethod, Iterations = input$tSNEIterations, Whitening = input$tSNEWhite)$ProjectedPoints,
+                 UniformManifoldApproximationProjection = ProjectionBasedClustering::UniformManifoldApproximationProjection(Data,Cls=Cls, k = input$knn, Epochs = input$Epochs)$ProjectedPoints
           )
         }
+        LastProjectionMethodUsed<<-type
         pData=project(type)
         
         # construct full CLS from unique bestmatches
@@ -489,9 +606,33 @@ interactiveProjectionBasedClustering <-
         }
         
         ## Generalized Umatrix ----
-        newU=GeneralizedUmatrix(Data=Data,ProjectedPoints = pData,Cls=Cls)
+       
+        newU=GeneralizedUmatrix(Data=Data,ProjectedPoints = pData,Cls=Cls,Toroid = TRUE)
+        #only for output/external usage
+        UmatrixNotExtended<<-newU$Umatrix
+        BestMatchesNotExtended<<- newU$Bestmatches#
+        #for internal usage and extentend bordes
         Umatrix <<- newU$Umatrix
         bestmatches <<- newU$Bestmatches
+        
+        Umatrix4Toroid <<- newU$Umatrix
+        bestmatches4Toroid <<- newU$Bestmatches
+        
+        #To be deleted later, if extend borders works interactively ----
+        if(input$ExtendBorders10){
+          
+          V=GeneralizedUmatrix::ExtendToroidalUmatrix(Umatrix,bestmatches,extendBorders)
+          Umatrix<<-V$Umatrix
+          bestmatches<<-V$Bestmatches
+            #Umatrix<<-cbind(Umatrix[,c((ncol(Umatrix)-extendBorders-1):ncol(Umatrix))],Umatrix,Umatrix[,1:extendBorders])
+            #Umatrix<<-rbind(Umatrix[c((nrow(Umatrix)-extendBorders-1):nrow(Umatrix)),],Umatrix,Umatrix[1:extendBorders,])
+
+            #bmu=bestmatches
+            #bmu[,1]=bmu[,1]+length(c((nrow(Umatrix)-extendBorders-1):nrow(Umatrix)))
+            #bmu[,2]=bmu[,2]+length(c((ncol(Umatrix)-extendBorders-1):ncol(Umatrix)))
+
+        }
+        ## until here
         createParams(Umatrix, bestmatches,Cls = Cls)
         LC <<-c(newU$Lines,newU$Columns)
         TopographicMapTopView_hlp(Cls=Cls,Tiled=input$Toroid)
@@ -501,12 +642,12 @@ interactiveProjectionBasedClustering <-
       })
       
       
-      # Button: Exit
+      # Button: Exit ----
       #MT hier fehlt noch names(Cls)=Key
       observeEvent(input$Exit, {
         Cls=normCls(Cls[mergei])$normalizedCls
         names(Cls)=Key
-        stopApp(list(Cls = Cls, Plot = outplot,Umatrix=Umatrix, Bestmatches=bestmatches))
+        stopApp(list(Cls = Cls,Umatrix=UmatrixNotExtended, Bestmatches=BestMatchesNotExtended,LastProjectionMethodUsed=LastProjectionMethodUsed,TopView_TopographicMap = outplot))
       })
     })
     

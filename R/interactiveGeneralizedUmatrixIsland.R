@@ -278,7 +278,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
     BmSize = BmSize / 2
     
     ################
-    #### bmuLabel Standard Style
+    #### bmuLabel Standard Style ----
     ################
     if(is.null(BestmatchesLabelStyle$color)) BestmatchesLabelStyle$color = "white"
     if(is.null(BestmatchesLabelStyle$fontface)) BestmatchesLabelStyle$fontface = "bold"
@@ -365,6 +365,11 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
       tU <- ToroidUmatrix(Matrix, Bestmatches, Cls)
       Matrix <- tU$Umatrix
       Bestmatches <- tU$Bestmatches
+      #ToDo: Wenn ich hier erweitere muss ich auch insel entsprechend verschieben und imx ausgabe entsprechend zurueckverschieben
+      #V=ExtendToroidalUmatrix(Matrix,Bestmatches[,2:3],10)
+      #Matrix <- V$Umatrix
+      #Bestmatches[,2:3] <- V$Bestmatches
+      
       Cls <- tU$Cls
     }
     
@@ -599,7 +604,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
   
   
   ############
-  # Fehler abfangen
+  ### Fehler abfangen ----
   ############
   if(missing(Umatrix))
     stop("Missing Umatrix")
@@ -628,7 +633,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
   if(!is.null(Bestmatches))
     idealIsland = bestUmatrixTranslation(Umatrix, Bestmatches)
   ##########
-  # Shiny Fenster
+  # Shiny Fenster ----
   ##########
   UmatrixUi = fluidPage(
     useShinyjs(),
@@ -736,7 +741,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
 
 
     ##########
-    # rerender Umatrix if island has changed
+    # rerender Umatrix if island has changed ----
     ##########
     observe({
       CurrentDirectory <- getwd()
@@ -782,7 +787,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
     })
 
     ##########
-    # plot Umatrix
+    # plot Umatrix ----
     ##########
     observe({
       output$UmatrixPlot <- renderPlot({
@@ -800,7 +805,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
     })
 
     ##########
-    # react on click
+    # react on click ----
     ##########
     observeEvent(input$clickOnUmatrix,{
       x <- isolate(input$clickOnUmatrix$x)
@@ -810,7 +815,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
     })
 
     #########
-    # react on button: create island
+    # react on button: create island ----
     #########
     observeEvent(input$createIsland,{
       # check if there are already enough points to draw a complete polygon
@@ -837,7 +842,7 @@ interactiveGeneralizedUmatrixIsland <- function(Umatrix, Bestmatches=NULL, Cls=N
     })
 
     #######
-    # react on button: reset island
+    # react on button: reset island ----
     #######
     observeEvent(input$resetIsland,{
       val$Imx = matrix(0,nrow=nrow(Umatrix)*2, ncol=ncol(Umatrix)*2)
