@@ -42,12 +42,12 @@ or
  
  \note{
  Only Transfered from matlab to R. Matlabversion: Contributed to SOM Toolbox 2.0, February 2nd, 2000 by Juha Vesanto
-  \url{http://www.cis.hut.fi/projects/somtoolbox/}
+  \url{https://www.cis.hut.fi/projects/somtoolbox/}
 
  You can use the standard \code{ShepardScatterPlot} or the better approach through the \code{ShepardDensityPlot} of the CRAN package \code{DataVisualizations}.
 }
  \details{
- An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1] (\url{https://doi.org/10.1007/978-3-658-20540-9}).
+ An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1] (\doi{10.1007/978-3-658-20540-9}).
  }
  \references{
 [Demartines/Herault, 1997]  Demartines, P., & Herault, J.: Curvilinear component analysis: A self-organizing neural network for nonlinear mapping of data sets, IEEE Transactions on Neural Networks, Vol. 8(1), pp. 148-154. 1997.

@@ -31,14 +31,14 @@ PlotIt = FALSE, Cls)
 \details{
 Uses the NeRV projection with matrix Data and lambda. Lambda controls the trustworthiness-continuity tradeoff.
 
- An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1] (\url{https://doi.org/10.1007/978-3-658-20540-9}).
+ An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1] (\doi{10.1007/978-3-658-20540-9}).
 
 }
 \value{
 OutputDimension-dimensional matrix of projected points
 }
 \note{
-PCA initialization changes form the original C++ Sourcecode of \url{http://research.cs.aalto.fi/pml/software/dredviz/} to the R version of the projections package.
+PCA initialization changes form the original C++ Sourcecode of \url{https://research.cs.aalto.fi/pml/software/dredviz/} to the R version of the projections package.
 Other changes are made only regarding data types of Rcpp in comparison to the original C++ Source code.
 
  You can use the standard \code{ShepardScatterPlot} or the better approach through the \code{ShepardDensityPlot} of the CRAN package \code{DataVisualizations}.

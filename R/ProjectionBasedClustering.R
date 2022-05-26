@@ -53,8 +53,8 @@ ProjectionBasedClustering=function(k,DataOrDistances,BestMatches,LC,StructureTyp
     }
   }
   
-    GOutput=Delaunay4Points(BestMatches, Grid = LC, IsToroid=T,PlotIt=F)
-    Dist=ShortestGraphPathsC(GOutput,InputD)
+  GOutput=Delaunay4Points(BestMatches, Grid = LC, IsToroid=T,PlotIt=F)
+  Dist=ShortestGraphPathsC(GOutput,InputD)
   if(StructureType){
     pDist=as.dist(Dist)
     hc <- hclust(pDist,method="ward.D")
@@ -128,7 +128,7 @@ ProjectionBasedClustering=function(k,DataOrDistances,BestMatches,LC,StructureTyp
       names(countPerClass)=uniqueClasses
       countPerClass=unlist(countPerClass)
       #get the right number of colors
-      cols=ProjectionBasedClustering::DefaultColorSequence[1:numberOfClasses]
+      cols=GeneralizedUmatrix::DefaultColorSequence[1:numberOfClasses]
      #what would be the ordering of datra based on frequency
       data_order=order(countPerClass,decreasing = TRUE) #from highest frequency
       #what would be the orders of the branches
