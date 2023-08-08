@@ -81,6 +81,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// opt_multicore_tnse_cpp
+Rcpp::NumericMatrix opt_multicore_tnse_cpp(Rcpp::NumericMatrix X, int no_dims, double perplexity, int max_iter, int num_threads, double theta, int n_iter_early_exag, double early_exaggeration, double learning_rate, int auto_iter, double auto_iter_end, int distance_squared);
+RcppExport SEXP _ProjectionBasedClustering_opt_multicore_tnse_cpp(SEXP XSEXP, SEXP no_dimsSEXP, SEXP perplexitySEXP, SEXP max_iterSEXP, SEXP num_threadsSEXP, SEXP thetaSEXP, SEXP n_iter_early_exagSEXP, SEXP early_exaggerationSEXP, SEXP learning_rateSEXP, SEXP auto_iterSEXP, SEXP auto_iter_endSEXP, SEXP distance_squaredSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type no_dims(no_dimsSEXP);
+    Rcpp::traits::input_parameter< double >::type perplexity(perplexitySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< int >::type n_iter_early_exag(n_iter_early_exagSEXP);
+    Rcpp::traits::input_parameter< double >::type early_exaggeration(early_exaggerationSEXP);
+    Rcpp::traits::input_parameter< double >::type learning_rate(learning_rateSEXP);
+    Rcpp::traits::input_parameter< int >::type auto_iter(auto_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type auto_iter_end(auto_iter_endSEXP);
+    Rcpp::traits::input_parameter< int >::type distance_squared(distance_squaredSEXP);
+    rcpp_result_gen = Rcpp::wrap(opt_multicore_tnse_cpp(X, no_dims, perplexity, max_iter, num_threads, theta, n_iter_early_exag, early_exaggeration, learning_rate, auto_iter, auto_iter_end, distance_squared));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_ProjectionBasedClustering_DijkstraSSSP", (DL_FUNC) &_ProjectionBasedClustering_DijkstraSSSP, 3},
@@ -88,6 +110,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ProjectionBasedClustering_c_measure", (DL_FUNC) &_ProjectionBasedClustering_c_measure, 3},
     {"_ProjectionBasedClustering_c_klmeasure", (DL_FUNC) &_ProjectionBasedClustering_c_klmeasure, 3},
     {"_ProjectionBasedClustering_klrank", (DL_FUNC) &_ProjectionBasedClustering_klrank, 3},
+    {"_ProjectionBasedClustering_opt_multicore_tnse_cpp", (DL_FUNC) &_ProjectionBasedClustering_opt_multicore_tnse_cpp, 12},
     {NULL, NULL, 0}
 };
 

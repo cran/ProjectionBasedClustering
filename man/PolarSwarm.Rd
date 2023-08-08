@@ -42,7 +42,7 @@ List of
   \item{ModelObject}{output of  \code{\link[DatabionicSwarm]{Pswarm}}}
 }
 \references{
-[Thrun/Ultsch, 2020]  Thrun, M. C., & Ultsch, A.: Swarm Intelligence for Self-Organized Clustering, Artificial intelligence, Vol. in press, pp. doi 10.1016/j.artint.2020.103237, 2020.
+[Thrun/Ultsch, 2020]  Thrun, M. C., & Ultsch, A.: Swarm Intelligence for Self-Organized Clustering, Artificial intelligence, Vol. 290, pp. 103237, doi 10.1016/j.artint.2020.103237, 2020.
 }
 \author{
 Michael Thrun

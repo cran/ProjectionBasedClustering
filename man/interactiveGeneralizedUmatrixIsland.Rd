@@ -3,18 +3,22 @@
 \title{GUI for cutting out an Island.}
 
 \usage{
-interactiveGeneralizedUmatrixIsland(Umatrix, Bestmatches=NULL, 
-
-Cls=NULL, Plotter="plotly")
+interactiveGeneralizedUmatrixIsland(Umatrix, Bestmatches=NULL, Cls=NULL, Plotter="plotly")
 }
 
 \description{The toroid Umatrix is usually drawn 4 times, so that connected areas on borders can be seen as a whole. An island is a manual cutout of such a tiled visualization, that is selected such that all connected areas stay intact. This shiny tool allows the user to do this manually.}
 
 \arguments{
-  \item{Umatrix}{[1:Lines,1:Columns] Matrix of Umatrix Heights}
-  \item{Bestmatches}{[1:n, 1:2] Matrix with positions of Bestmatches for n datapoints, first columns is the position in \code{Lines} and second column in \code{Columns}}
-  \item{Cls}{[1:n] numerical vector, Classification of the Bestmatches}
-  \item{Plotter}{Optional, string, either "ggplot2" or "plotly"}
+\item{Umatrix}{[1:Lines,1:Columns] Matrix of Umatrix Heights
+}
+\item{Bestmatches}{[1:n, 1:2] Matrix with positions of Bestmatches for n
+datapoints, first columns is the position in \code{Lines} and second column in
+\code{Columns}
+}
+\item{Cls}{Classification of the Bestmatches
+}
+\item{Plotter}{Choose between plotting frameworks: "plotly" and "ggplot2"
+}
 }
 \value{Boolean Matrix that represents the island within the tiled Umatrix.}
 \details{

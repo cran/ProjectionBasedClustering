@@ -4,7 +4,7 @@
 \usage{
 tSNE(DataOrDistances,k,OutputDimension=2,Algorithm='tsne_cpp',
 
-method="euclidean",Whitening=FALSE, Iterations=1000,PlotIt=FALSE,Cls,\dots)
+method="euclidean",Whitening=FALSE, Iterations=1000,PlotIt=FALSE,Cls,num_threads=1,\dots)
 }
 \arguments{
 \item{DataOrDistances}{
@@ -19,9 +19,11 @@ or
 \item{k}{number of k nearest neighbors=number of effective nearest neighbors("perplexity"); Important parameter. If not given, settings of packages of t-SNE will be used depending \code{Algorithm}}
   \item{OutputDimension}{Number of dimensions in the Outputspace, default=2}
 	\item{Algorithm}{
-	tsne_cpp': T-Distributed Stochastic Neighbor Embedding using a Barnes-HutImplementation in C++ of \pkg{Rtsne}
+	'tsne_cpp': T-Distributed Stochastic Neighbor Embedding using a Barnes-HutImplementation in C++ of \pkg{Rtsne}. Requires Version >= 0.15 of \pkg{Rtsne} for multicore parallelisation.
 	
-    'tsne_r': pure R implementation of the t-SNE algorithm of of \pkg{tsne}
+	'tsne_opt_cpp': T-Distributed Stochastic Neighbor Embedding with automated optimized parameters using a Barnes-HutImplementation in C++.
+	
+  'tsne_r': pure R implementation of the t-SNE algorithm of of \pkg{tsne}
 }
 \item{method}{	                    method specified by distance string: 
                           'euclidean','cityblock=manhatten','cosine','chebychev','jaccard','minkowski','manhattan','binary' 
@@ -37,9 +39,13 @@ or
 	}
 	\item{Cls}{[1:n,1] Optional,: only relevant if PlotIt=TRUE. Numeric vector, given Classification in numbers: every element is the cluster number of a certain corresponding element of data.
 }
+\item{num_threads}{
+Number of threads for parallel computation, only usable for Algorithm='tsne_cpp' or 'tsne_opt_cpp'
+}
 
 \item{\dots}{
-Further arguments passed on to either 'Rtsne' or 'tsne' }
+Further arguments passed on to either 'Rtsne' or 'tsne' 
+}
 }
 \value{
 List of 
@@ -51,12 +57,21 @@ List of
 	}
  
  \note{
-A wrapper for \code{\link[Rtsne]{Rtsne}}
+A wrapper for \code{\link[Rtsne]{Rtsne}} (Algorithm='tsne_cpp'),
 
-or  for \code{\link[tsne]{tsne}}
+\href{https://github.com/omiq-ai/Multicore-opt-SNE}{Multicore-opt-tSNE} (Algorithm='tsne_opt_cpp'),
+
+or  for \code{\link[tsne]{tsne}} (Algorithm='tsne_r')
 
  You can use the standard \code{ShepardScatterPlot} or the better approach through the \code{ShepardDensityPlot} of the CRAN package \code{DataVisualizations}.
 }
+
+\references{
+Anna C. Belkina, Christopher O. Ciccolella, Rina Anno, Josef Spidlen, Richard Halpert, Jennifer Snyder-Cappione. Automated optimal parameters for T-distributed stochastic neighbor embedding improve visualization and allow analysis of large datasets (2018) bioRxiv 451690; doi: https://doi.org/10.1101/451690
+
+L.J.P van der Maaten. Accelerating t-SNE using tree-based algorithms. Journal of Machine Learning Research 15.1:3221-3245, 2014.
+}
+
  \details{
  An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1] (\doi{10.1007/978-3-658-20540-9}).
  }
@@ -64,13 +79,16 @@ or  for \code{\link[tsne]{tsne}}
 data('Hepta')
 Data=Hepta$Data
 
+\dontrun{
 Proj=tSNE(Data,k=7)
 
-\dontrun{
 PlotProjectedPoints(Proj$ProjectedPoints,Hepta$Cls)
 }
+\dontshow{
+Proj=tSNE(Data[1:4,],k = 1,Iterations=1,Method="tsne_r")
 }
- \author{Michael Thrun}
+}
+\author{Michael Thrun}
 
 \keyword{tSNE}
 \concept{t-SNE}

@@ -36,6 +36,12 @@ IPBC=interactiveProjectionBasedClustering = function(Data, Cls=NULL) {
     LC=NULL
     imx<-NA
     
+    if (!requireNamespace('parallel')) {
+      num_threads = 1
+    } else {
+      num_threads = parallel::detectCores()
+    }
+    
     if(is.null(Cls))#give back all cases in one group, if function exists before clustering and no cls given
       Cls=rep(1,nrow(Data))
      
@@ -140,7 +146,7 @@ IPBC=interactiveProjectionBasedClustering = function(Data, Cls=NULL) {
               tabPanel(
                 title = "Projection",
                 h3(" "),
-                selectInput('projections','Choose Projection Method',choices=c('PCA','CCA','ICA','MDS','NeRV','ProjectionPursuit',"Pswarm",'SammonsMapping','UniformManifoldApproximationProjection','tSNE'),selected='NeRV'),
+                selectInput('projections','Choose Projection Method',choices=c('PCA','CCA','ICA','MDS','NeRV','ProjectionPursuit',"Pswarm",'SammonsMapping','UniformManifoldApproximationProjection','tSNE'),selected='tSNE'),
                 
                 # Further Parameter-Querys for Projections
                 #PCA
@@ -211,12 +217,19 @@ IPBC=interactiveProjectionBasedClustering = function(Data, Cls=NULL) {
                 #TSNE
                 
                 conditionalPanel(condition ="input.projections=='tSNE'", selectInput(
+                  "tSNEAlgorithm", "tSNE-Algorithm"  , selected = 'tsne_cpp', 
+                  choices = c('rTSNE (multicore)' = 'tsne_cpp', 'opt-tSNE (multicore)' = 'opt_tsne_cpp', 'tSNE (R)' = 'tsne_r'))),
+                
+                conditionalPanel(condition ="input.projections=='tSNE'", selectInput(
                   "tSNEMethod", "Method"  , selected = 'logcosh', c('euclidean','maximum','canberra','manhattan'))),
                 
                 conditionalPanel(condition ="input.projections=='tSNE'",
                                  numericInput("tSNEIterations", "Iterations", value=1000, min = 1, max = NA, step = 1)),
-                conditionalPanel(condition ="input.projections=='tSNE'", 
+                conditionalPanel(condition ="input.projections=='tSNE' && !(input.tSNEAlgorithm == 'opt_tsne_cpp')", 
                                  checkboxInput("tSNEWhite", "Whitening", value = FALSE, width = NULL)),
+                conditionalPanel(condition ="input.projections=='tSNE' && !(input.tSNEAlgorithm == 'tsne_r')", 
+                                 numericInput("tSNEThreads", "Number of Threads", value = num_threads - 1, min = 1, max = num_threads, step = 1)),
+                
                 
                 # UniformManifoldApproximationProjection
                 
@@ -592,7 +605,7 @@ IPBC=interactiveProjectionBasedClustering = function(Data, Cls=NULL) {
                  ProjectionPursuit=ProjectionPursuit(Data,OutputDimension = 2,Cls=Cls, Iterations = input$PPIterations, Indexfunction =input$PPMethod , Alpha =input$PPAlpha )$ProjectedPoints,
                  SammonsMapping = SammonsMapping(Data,OutputDimension = 2,Cls=Cls,  method=input$MDSMethod)$ProjectedPoints,
                  Pswarm= PolarSwarm(Data,Cls=Cls, method = input$PswarmDistMethod)$ProjectedPoints,
-                 tSNE = tSNE(Data,OutputDimension = 2,Cls=Cls, method = input$tSNEMethod, Iterations = input$tSNEIterations, Whitening = input$tSNEWhite)$ProjectedPoints,
+                 tSNE = tSNE(Data,OutputDimension = 2,Algorithm=input$tSNEAlgorithm,Cls=Cls, method = input$tSNEMethod, Iterations = input$tSNEIterations, Whitening = input$tSNEWhite, num_threads = input$tSNEThreads)$ProjectedPoints,
                  UniformManifoldApproximationProjection = UniformManifoldApproximationProjection(Data,Cls=Cls, k = input$knn, Epochs = input$Epochs)$ProjectedPoints
           )
         }

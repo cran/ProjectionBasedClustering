@@ -21,3 +21,7 @@ klrank <- function(Data, pData, NeighborhoodSize = 20L) {
     .Call('_ProjectionBasedClustering_klrank', PACKAGE = 'ProjectionBasedClustering', Data, pData, NeighborhoodSize)
 }
 
+opt_multicore_tnse_cpp <- function(X, no_dims, perplexity, max_iter, num_threads, theta, n_iter_early_exag, early_exaggeration, learning_rate, auto_iter, auto_iter_end, distance_squared) {
+    .Call('_ProjectionBasedClustering_opt_multicore_tnse_cpp', PACKAGE = 'ProjectionBasedClustering', X, no_dims, perplexity, max_iter, num_threads, theta, n_iter_early_exag, early_exaggeration, learning_rate, auto_iter, auto_iter_end, distance_squared)
+}
+
