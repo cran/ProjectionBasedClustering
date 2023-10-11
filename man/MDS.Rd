@@ -26,7 +26,7 @@ or
 \value{
 
   \item{ProjectedPoints}{
- [1:n,OutputDimension], n by OutputDimension matrix containing coordinates of the Projectio
+ [1:n,OutputDimension], n by OutputDimension matrix containing coordinates of the Projection
 }
 
   \item{Eigenvalues}{

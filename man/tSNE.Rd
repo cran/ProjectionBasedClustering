@@ -21,7 +21,7 @@ or
 	\item{Algorithm}{
 	'tsne_cpp': T-Distributed Stochastic Neighbor Embedding using a Barnes-HutImplementation in C++ of \pkg{Rtsne}. Requires Version >= 0.15 of \pkg{Rtsne} for multicore parallelisation.
 	
-	'tsne_opt_cpp': T-Distributed Stochastic Neighbor Embedding with automated optimized parameters using a Barnes-HutImplementation in C++.
+	'tsne_opt_cpp': T-Distributed Stochastic Neighbor Embedding with automated optimized parameters using a Barnes-HutImplementation in C++ of [Ulyanov, 2016].
 	
   'tsne_r': pure R implementation of the t-SNE algorithm of of \pkg{tsne}
 }
@@ -67,13 +67,15 @@ or  for \code{\link[tsne]{tsne}} (Algorithm='tsne_r')
 }
 
 \references{
-Anna C. Belkina, Christopher O. Ciccolella, Rina Anno, Josef Spidlen, Richard Halpert, Jennifer Snyder-Cappione. Automated optimal parameters for T-distributed stochastic neighbor embedding improve visualization and allow analysis of large datasets (2018) bioRxiv 451690; doi: https://doi.org/10.1101/451690
+Anna C. Belkina, Christopher O. Ciccolella, Rina Anno, Josef Spidlen, Richard Halpert, Jennifer Snyder-Cappione: Automated optimal parameters for T-distributed stochastic neighbor embedding improve visualization and allow analysis of large datasets, bioRxiv 451690, doi: https://doi.org/10.1101/451690, 2018.
 
-L.J.P van der Maaten. Accelerating t-SNE using tree-based algorithms. Journal of Machine Learning Research 15.1:3221-3245, 2014.
+L.J.P van der Maaten: Accelerating t-SNE using tree-based algorithms, Journal of Machine Learning Research 15.1:3221-3245, 2014.
+
+Ulyanov, Dmitry: Multicore-TSNE, GitHub repository URL \url{https://github.com/DmitryUlyanov/Multicore-TSNE}, 2016.
+
 }
-
  \details{
- An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1] (\doi{10.1007/978-3-658-20540-9}).
+ An short overview of different types of projection methods can be found in [Thrun, 2018, p.42, Fig. 4.1], \doi{10.1007/978-3-658-20540-9}.
  }
 \examples{
 data('Hepta')
@@ -85,10 +87,10 @@ Proj=tSNE(Data,k=7)
 PlotProjectedPoints(Proj$ProjectedPoints,Hepta$Cls)
 }
 \dontshow{
-Proj=tSNE(Data[1:4,],k = 1,Iterations=1,Method="tsne_r")
+Proj=tSNE(Data[1:10,],k = 2,Algorithm="tsne_r")
 }
 }
-\author{Michael Thrun}
+\author{Michael Thrun, Luca Brinkmann}
 
 \keyword{tSNE}
 \concept{t-SNE}

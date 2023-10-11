@@ -9,12 +9,12 @@ c_NeRV <- function(data, lambda, lastNeighbor, iterations, stepsPerRound, stepsO
     .Call('_ProjectionBasedClustering_c_NeRV', PACKAGE = 'ProjectionBasedClustering', data, lambda, lastNeighbor, iterations, stepsPerRound, stepsOnLastRound, randominit, outputDimension, pca)
 }
 
-c_measure <- function(datamat, projmat, lastNeighbor) {
-    .Call('_ProjectionBasedClustering_c_measure', PACKAGE = 'ProjectionBasedClustering', datamat, projmat, lastNeighbor)
+ContTrustMeasure <- function(datamat, projmat, lastNeighbor) {
+    .Call('_ProjectionBasedClustering_ContTrustMeasure', PACKAGE = 'ProjectionBasedClustering', datamat, projmat, lastNeighbor)
 }
 
-c_klmeasure <- function(Data, pData, NeighborhoodSize = 20L) {
-    .Call('_ProjectionBasedClustering_c_klmeasure', PACKAGE = 'ProjectionBasedClustering', Data, pData, NeighborhoodSize)
+KLMeasure <- function(Data, pData, NeighborhoodSize = 20L) {
+    .Call('_ProjectionBasedClustering_KLMeasure', PACKAGE = 'ProjectionBasedClustering', Data, pData, NeighborhoodSize)
 }
 
 klrank <- function(Data, pData, NeighborhoodSize = 20L) {

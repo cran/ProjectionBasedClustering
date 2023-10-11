@@ -15,7 +15,7 @@ using dredviz::Euclidean;
 using dredviz::NeRVProbability;
 
 // [[Rcpp::export]]
-List c_klmeasure(NumericMatrix Data, NumericMatrix pData, int NeighborhoodSize = 20) {
+List KLMeasure(NumericMatrix Data, NumericMatrix pData, int NeighborhoodSize = 20) {
   DataMatrix mat (Data);
   DataMatrix pmat (pData);
   DataSet    origData (mat);

@@ -18,6 +18,9 @@ export(interactiveClustering)
 export(interactiveGeneralizedUmatrixIsland)
 export(interactiveProjectionBasedClustering)
 export(IPBC)
+export(KLMeasure)
+export(ContTrustMeasure)
+
 
 import(deldir)
 import(GeneralizedUmatrix)

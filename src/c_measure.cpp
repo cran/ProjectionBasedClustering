@@ -16,7 +16,7 @@ using dredviz::Euclidean;
 using dredviz::ContTrust;
 
 // [[Rcpp::export]]
-NumericMatrix c_measure(NumericMatrix datamat, NumericMatrix projmat, unsigned int lastNeighbor) {
+NumericMatrix ContTrustMeasure(NumericMatrix datamat, NumericMatrix projmat, unsigned int lastNeighbor) {
   DistanceMatrix origDataDist;
   DistanceMatrix projDataDist;
   Euclidean metric;

@@ -42,29 +42,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// c_measure
-NumericMatrix c_measure(NumericMatrix datamat, NumericMatrix projmat, unsigned int lastNeighbor);
-RcppExport SEXP _ProjectionBasedClustering_c_measure(SEXP datamatSEXP, SEXP projmatSEXP, SEXP lastNeighborSEXP) {
+// ContTrustMeasure
+NumericMatrix ContTrustMeasure(NumericMatrix datamat, NumericMatrix projmat, unsigned int lastNeighbor);
+RcppExport SEXP _ProjectionBasedClustering_ContTrustMeasure(SEXP datamatSEXP, SEXP projmatSEXP, SEXP lastNeighborSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type datamat(datamatSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type projmat(projmatSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type lastNeighbor(lastNeighborSEXP);
-    rcpp_result_gen = Rcpp::wrap(c_measure(datamat, projmat, lastNeighbor));
+    rcpp_result_gen = Rcpp::wrap(ContTrustMeasure(datamat, projmat, lastNeighbor));
     return rcpp_result_gen;
 END_RCPP
 }
-// c_klmeasure
-List c_klmeasure(NumericMatrix Data, NumericMatrix pData, int NeighborhoodSize);
-RcppExport SEXP _ProjectionBasedClustering_c_klmeasure(SEXP DataSEXP, SEXP pDataSEXP, SEXP NeighborhoodSizeSEXP) {
+// KLMeasure
+List KLMeasure(NumericMatrix Data, NumericMatrix pData, int NeighborhoodSize);
+RcppExport SEXP _ProjectionBasedClustering_KLMeasure(SEXP DataSEXP, SEXP pDataSEXP, SEXP NeighborhoodSizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type pData(pDataSEXP);
     Rcpp::traits::input_parameter< int >::type NeighborhoodSize(NeighborhoodSizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(c_klmeasure(Data, pData, NeighborhoodSize));
+    rcpp_result_gen = Rcpp::wrap(KLMeasure(Data, pData, NeighborhoodSize));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -107,8 +107,8 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_ProjectionBasedClustering_DijkstraSSSP", (DL_FUNC) &_ProjectionBasedClustering_DijkstraSSSP, 3},
     {"_ProjectionBasedClustering_c_NeRV", (DL_FUNC) &_ProjectionBasedClustering_c_NeRV, 9},
-    {"_ProjectionBasedClustering_c_measure", (DL_FUNC) &_ProjectionBasedClustering_c_measure, 3},
-    {"_ProjectionBasedClustering_c_klmeasure", (DL_FUNC) &_ProjectionBasedClustering_c_klmeasure, 3},
+    {"_ProjectionBasedClustering_ContTrustMeasure", (DL_FUNC) &_ProjectionBasedClustering_ContTrustMeasure, 3},
+    {"_ProjectionBasedClustering_KLMeasure", (DL_FUNC) &_ProjectionBasedClustering_KLMeasure, 3},
     {"_ProjectionBasedClustering_klrank", (DL_FUNC) &_ProjectionBasedClustering_klrank, 3},
     {"_ProjectionBasedClustering_opt_multicore_tnse_cpp", (DL_FUNC) &_ProjectionBasedClustering_opt_multicore_tnse_cpp, 12},
     {NULL, NULL, 0}
