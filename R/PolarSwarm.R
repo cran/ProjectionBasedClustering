@@ -21,7 +21,7 @@ PolarSwarm=function(DataOrDistances,method='euclidean',PlotIt=FALSE,Cls){
     )
   }
   
-  ModelObject=DatabionicSwarm::Pswarm(DataOrDistances,method = method)
+  ModelObject=DatabionicSwarm::Pswarm(DataOrDistances, DistanceMeasure = method)
   
   ProjectedPoints=ModelObject$ProjectedPoints
   if(PlotIt){

@@ -1,4 +1,4 @@
-interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL, Cls=NULL){
+interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL, Cls=NULL,NoLevels=NULL){
   # Imx = interactiveGeneralizedUmatrixIsland(Umatrix, Bestmatches, Cls)
   #
   # INPUT
@@ -224,7 +224,7 @@ interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL
   #ShowUmatrix_Hlp
   showUmatrix_hlp <- function(Matrix = NULL, Bestmatches=NULL, Cls = NULL, ClsColors=NULL,
                               ColorStyle = "Umatrix", Toroid=TRUE,BmSize=2, DrawLegend=F,
-                              FixedRatio=T, CutoutPol=NULL, Nrlevels = NULL, TransparentContours = T,
+                              FixedRatio=T, CutoutPol=NULL, NoLevels = NULL, TransparentContours = FALSE,
                               Imx = NULL, Clean=F, RemoveOcean=F, TransparentOcean = FALSE,
                               Title = NULL, BestmatchesLabels = NULL,
                               BestmatchesLabelStyle = c(), BestmatchesShape=19, MarkDuplicatedBestmatches = F, YellowCircle = F){
@@ -249,7 +249,7 @@ interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL
     # DrawLegend
     # FixedRatio            should the ratio of Width and Height be fixed or matched to the window Width and Height
     # CutoutPol(1:n,1:2)     only draws the area within given polygon
-    # Nrlevels               nr of breaks that will be done
+    # NoLevels               nr of breaks that will be done
     # TransparentContours    use half transparent contours. Looks better but is slow
     # Imx                    a Imx (Imx) that will be used to cut out the umatrix
     # Fast                  Faster version that will be drawn using baseplot
@@ -331,8 +331,8 @@ interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL
     
     ### Hoehe aus Umatrix schaetzen
     #Verhaeltnis zwischen minhoehe/maxHoehe=1/HeightScale
-    if(is.null(Nrlevels)){
-      Nrlevels=round(maxU2/max(minU2,0.05),0)
+    if(is.null(NoLevels)){
+      NoLevels=round(maxU2/max(minU2,0.05),0)
     }
     #MT: Die Level muessen vor der Begrenzung der Werte auf 0 und 1 gesetz werden,
     #aber nachdem der Wertebereich umgeschoben wurde, damit die Dichte in den Grenzbereichen abgeschetzt werden kann
@@ -362,7 +362,7 @@ interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL
       BestmatchesLabels <- cbind(Bestmatches[,1], BestmatchesLabels)
     }
     
-    Nrlevels2=Nrlevels #nicht konturen sondern farbintervalle!
+    Nrlevels2=NoLevels #nicht konturen sondern farbintervalle!
     #lohnt sich nicht eine andere zahl als die die konturenanzahl zu setzen
     # get Toroid values for the Umatrix
     if(Toroid){
@@ -464,7 +464,7 @@ interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL
       geom_tile(aes_string(fill = 'z'))+
       
       scale_fill_gradientn(colours=colorx,space='Lab', na.value="transparent")+
-      stat_contour(aes_string(z='z'), data=dfMatrix2,bins=Nrlevels,size = 0.25,color='black',alpha=alpha,na.rm = F)+ #80% der Laufzeit wird fuer konturen benoetigt
+      stat_contour(aes_string(z='z'), data=dfMatrix2,bins=NoLevels,size = 0.25,color='black',alpha=alpha,na.rm = F)+ #80% der Laufzeit wird fuer konturen benoetigt
       ylab("Lines (y)")+xlab("Columns (x)")
     
     #MatrixPlot = MatrixPlot + scale_y_reverse()
@@ -763,7 +763,7 @@ interactiveGeneralizedUmatrixIsland_ggplot <- function(Umatrix, Bestmatches=NULL
       umx <- showUmatrix_hlp(Umatrix, BmSize = as.numeric(input$BmSize)*2,
                              Bestmatches = val$Bestmatches, Cls = val$Cls,
                              Clean = T, Imx=val$Imx, RemoveOcean = T,
-                             TransparentContours = F, Toroid = T,
+                             TransparentContours = F, Toroid = T, NoLevels = NoLevels,
                              MarkDuplicatedBestmatches=(islandExists&input$ShowWarnings))
 
       if(!is.null(val$Bestmatches))

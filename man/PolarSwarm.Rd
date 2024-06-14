@@ -59,7 +59,8 @@ Data=Hepta$Data
 Distances=as.matrix(dist(Data))
 Proj=PolarSwarm(Data)}
 \dontrun{
-PlotProjectedPoints(Proj$ProjectedPoints,Hepta$Cls)}
+PlotProjectedPoints(Proj$ProjectedPoints,Hepta$Cls)
+}
 \dontshow{Proj=PolarSwarm(as.matrix(dist(Data[1:20,])))}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

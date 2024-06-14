@@ -1,7 +1,7 @@
 helperTopographicIsland <- function(GeneralizedUmatrix, BestMatchingUnits,Cls,
                                     ClsColors=NULL,Imx=NULL,
                                     ClsNames=NULL,
-                                    BmSize=6,DotLineWidth=2,alpha=1,...) {
+                                    BmSize=6,DotLineWidth=2,alpha=1,NoLevels=NULL,...) {
   
   tileGUM=function(Umatrix, BestMatches = NULL, Cls = NULL) 
   {
@@ -236,7 +236,9 @@ helperTopographicIsland <- function(GeneralizedUmatrix, BestMatchingUnits,Cls,
   
   PlotlyUmatrix = function(plotdim, plotumx, colormap, Nrlevels2, plotbmus,
                            class, ClsColors, MarkerSize, ShinyBinding,
-                           ShinyDimension, Imx, Cls, DotLineWidth, alpha){
+                           ShinyDimension, Imx, Cls, DotLineWidth, alpha,NoLevels=NULL){
+    
+    if(is.null(NoLevels)) NoLevels=15 #Default that was set by QMS
     # configure filter, so that every bestmatch stays in
     # put Imx on Umatrix and bestmatches if given
     if(!is.null(Imx)){
@@ -297,7 +299,7 @@ helperTopographicIsland <- function(GeneralizedUmatrix, BestMatchingUnits,Cls,
     plt <- plotly::add_contour(plt, x = 1:plotdim[1], y = 1:plotdim[2], 
                                z = plotumx, showscale = FALSE, 
                                line = list(color = 'black', width = 0.5), 
-                               contours = list(start=0, end=1, size=1/15),
+                               contours = list(start=0, end=1, size=1/NoLevels),
                                colors = colorRamp(colormap[c(  1,2,
                                       seq(from=3, to=length(colormap)-30, 
                                           length.out = abs(ceiling(Nrlevels2+1)-4)), # QS: Added abs() since nonnegatives are not allowed
@@ -414,7 +416,7 @@ helperTopographicIsland <- function(GeneralizedUmatrix, BestMatchingUnits,Cls,
   plotdim <- qdim
   plt=PlotlyUmatrix(plotdim, plotumx, colormap, Nrlevels2, plotbmus, class,
                     ClsColors, BmSize, ShinyBinding, ShinyDimension, Imx, Cls,
-                    DotLineWidth, alpha)
+                    DotLineWidth, alpha,NoLevels=NoLevels)
   
   if(!is.null(main))
     plt=plotly::layout(plt,title = list(text=main))

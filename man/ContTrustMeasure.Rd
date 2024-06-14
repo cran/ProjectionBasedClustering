@@ -2,7 +2,7 @@
 \alias{ContTrustMeasure}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Measure of trustworthiness and continuity for projection}
+continuity and trustworthiness}
 \description{
 Computes trustworthiness and continuity for projected data (see [Kaski2003]).
 }
@@ -21,8 +21,13 @@ numerical matrix of projected data: n cases in rows, k variables in columns, whe
 scalar, maximal size of neighborhood to be considered}
 }
 \details{
+This is a wrapper that is used in the \pkg{DRquality} to
+investigate varius quality measurements [Thrun et al, 2023]. The paper indicates, that the Gabriel classification error seems to be a good alternative. [Thrun et al, 2023].
+}
+\note{
 C++ source code comes from \url{https://research.cs.aalto.fi/pml/software/dredviz/}
 }
+
 \value{
 numerical [k,7] matrix, where k is the lastNeighbor value.
 The matrix contains the columns:
@@ -35,12 +40,12 @@ where neighborhood size is the size of the neighberhood considered, which ranges
 [Kaski2003]: Samuel Kaski, Janne Nikkilä, Merja Oja, Jarkko Venna, Petri Törönen, and Eero Castren. Trustworthiness and metrics in visualizing similarity of gene expression. BMC Bioinformatics, 4:48, 2003.
 }
 \author{
-Michael Thrun
+Luca Brinkmann, Felix Pape
 }
 
 
 \seealso{
-An alternative measure is the \link{KLMeasure}
+For plotting see \code{plotMeasureTundD} in the package \pkg{DRquality}. An alternative measure is the \link{KLMeasure}, see also \link[DRquality]{GabrielClassificationError}
 }
 
 \examples{
@@ -48,8 +53,6 @@ data('Hepta')
 Data=Hepta$Data
 res=MDS(Data)
 Proj = res$ProjectedPoints
-PlotProjectedPoints(res$ProjectedPoints,Hepta$Cls)
-
 ContTrustMeasure(Hepta$Data, Proj, 10)
 }
 

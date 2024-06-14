@@ -1,4 +1,4 @@
-interactiveGeneralizedUmatrixIsland_plotly <- function(Umatrix, Bestmatches=NULL, Cls=NULL){
+interactiveGeneralizedUmatrixIsland_plotly <- function(Umatrix, Bestmatches=NULL, Cls=NULL,NoLevels=15){
   # Imx = interactiveGeneralizedUmatrixIsland(Umatrix, Bestmatches, Cls)
   #
   # INPUT
@@ -15,7 +15,6 @@ interactiveGeneralizedUmatrixIsland_plotly <- function(Umatrix, Bestmatches=NULL
   #requireRpackage("tcltk")
   #FilePath<-getwd() #MT: sonst funktionierts nicht
   
-  outplot=NULL
   ##########
   # Shiny Fenster ----
   ##########
@@ -215,7 +214,7 @@ interactiveGeneralizedUmatrixIsland_plotly <- function(Umatrix, Bestmatches=NULL
                                                               Tiled=Tiled,
                                                               BmSize = MarkerSize,
                                                               DotLineWidth=DotLineWidth,
-                                                              alpha=alpha,
+                                                              alpha=alpha,NoLevels=NoLevels,
                                                               ShinyBinding=TRUE,
                                                               #ShinyDimension=input$dimension[1],
                                                               Session=session)
@@ -264,9 +263,11 @@ interactiveGeneralizedUmatrixIsland_plotly <- function(Umatrix, Bestmatches=NULL
                                                           width = 1)),
                                 showlegend = F, type = "scatter")
       }
+      
+      #Rendered <- plotly::renderPlotly({plt})
+      plt      <- plotly::toWebGL(plt) # Edit QMS: 29.05.2024
       Rendered <- plotly::renderPlotly({plt})
       output$Plot=Rendered
-      outplot <<- plt
     }#end TopographicMapTopView_hlp
     
     tileGUM=function(Umatrix, BestMatches = NULL, Cls = NULL){
